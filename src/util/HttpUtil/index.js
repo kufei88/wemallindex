@@ -3,28 +3,30 @@ var HttpUtil = function(){};
 
 HttpUtil.get = function(url, params, cb){
 
-    AjaxPlugin.$http.get('/'+url, {params:params})
+    AjaxPlugin.$http.get('api/'+url, {params:params})
     .then((response) => {
         if (cb) cb(response.data)
     })
 }
 
-HttpUtil.post = function(url, params, cb){
+HttpUtil.post = function(url, params, cb,ce){
     let dataStr = ''
     for (let key in params) {
         dataStr += key + '=' + params[key]+'&'
     }
     dataStr = dataStr.substr(0, dataStr.length - 1)
 
-    AjaxPlugin.$http.post('/'+url, dataStr)
+    AjaxPlugin.$http.post('api/'+url, dataStr)
     .then((response) => {
         if (cb) cb(response.data)
+    },(error)=>{
+      if(ce) ce(error)
     })
 }
 
 HttpUtil.del = function(url, params, cb){
 
-      AjaxPlugin.$http.delete('/'+url, {params:params})
+      AjaxPlugin.$http.delete('api/'+url, {params:params})
       .then((response) => {
           if (cb) cb(response.data)
       })

@@ -1,45 +1,41 @@
 <template>
   <div>
-    <div id="emptylist" v-if="list.length==0">
-      <h4>居然还没有订单</h4>
-      <p class="font-size-12">好东西，手慢无</p>
-      <router-link to="/" class="tag" style="padding:8px 30px;">去逛逛</router-link>
-    </div>
-    <div v-else id="billlist" style="font-size:9px">
-      <ul class="ubilllist">
-        <li class="bill" v-for="item in list" :key="item.billcode">
-          <div>
-            <div class="title">
-              <p>{{title}}:{{item.billdate}}</p>
-              <div v-if="showMenu">
-                <div v-if="item.audite=='0'&&!item.deliver">
-                  <a class="del" @click.prevent="delBill(item.billcode)">删除</a>
-                  <a @click.prevent="edtBill(item.billcode)">修改</a>
-                </div>
-                <div v-else class="signet"></div>
-              </div>
-            </div>
-
-            <ul class="goodslist">
-              <li
-                v-for="item1 in item.goodslist"
-                :key="item1.goodsName"
-                v-html="item1.goodsName+':'+item1.number+'(件)'+(item1.weight?(item1.weight+'(斤)'):'')"
-              ></li>
-            </ul>
-          </div>
-        </li>
-      </ul>
+    <div style="font-size:16px;background-color:#fff;">
+      <flexbox
+        style="background-color: #F7F7F7 ;padding-left:10px;position:fixed;height:40px;top:100px"
+      >
+        <flexbox-item>日期</flexbox-item>
+        <flexbox-item>当天货款</flexbox-item>
+        <flexbox-item>实付</flexbox-item>
+        <flexbox-item>结余</flexbox-item>
+      </flexbox>
+      <div style="margin-top:50px">
+        <div
+          v-for="(item, index) in list"
+          :key="index"
+          style="border-bottom:1px solid #ddd"
+          @click.prevent="edtBill(item)"
+        >
+          <flexbox style="height:50px;margin-left:10px">
+            <flexbox-item>{{ item["日期"].substring(5, 11) }}</flexbox-item>
+            <flexbox-item>{{ item["应付款"].toFixed(2) }}</flexbox-item>
+            <flexbox-item>{{ item["付款"].toFixed(2) }}</flexbox-item>
+            <flexbox-item>{{ item["结余金额"].toFixed(2) }}</flexbox-item>
+          </flexbox>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { XNumber } from "vux";
+import { XNumber, Flexbox, FlexboxItem } from "vux";
 export default {
-  name: "billList",
+  name: "statementList",
   components: {
-    XNumber
+    XNumber,
+    Flexbox,
+    FlexboxItem
   },
 
   props: {
@@ -120,7 +116,7 @@ export default {
 
 .bill {
   background: #fff;
-  margin-top: 10px;
+  margin-top: 5px;
   border-bottom: 1px solid #ddd;
   border-top: 1px solid #ddd;
   position: relative;
@@ -130,12 +126,12 @@ export default {
   margin: 0 10px;
   line-height: 40px;
   height: 40px;
-  font-size: 12px;
+  font-size: 15px;
   float: left;
 }
 
 .title a {
-  font: 12px/20px "微软雅黑";
+  font: 18px/30px "微软雅黑";
   float: right;
   text-decoration: none;
   color: red;
@@ -143,7 +139,7 @@ export default {
   width: 50px;
   text-align: center;
   border-radius: 5px;
-  height: 20px;
+  height: 30px;
   margin: 5px;
 }
 
@@ -155,14 +151,15 @@ export default {
 .goodslist {
   font-size: 0;
   padding: 0 15px;
+  background: #f0f2f5;
 }
 
 .goodslist li {
   display: inline-block;
-  font-size: 13px;
-  width: 45%;
-  height: 40px;
-  line-height: 40px;
+  font-size: 12px;
+  width: 100%;
+  height: 1.2rem;
+  line-height: 1.2rem;
 }
 
 .signet {
@@ -175,5 +172,48 @@ export default {
   background: url(../assets/index.png) no-repeat;
   background-size: 64px 64px;
 }
-</style>
 
+.item-pay-data {
+  float: right;
+}
+
+.price {
+  font-weight: 700;
+  text-overflow: ellipsis;
+}
+
+.num {
+  font-size: 12px;
+  color: #999;
+}
+
+.sum {
+  float: right;
+}
+
+.sum b {
+  word-break: break-all;
+  font-weight: 700;
+}
+.goods {
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.itemfooter {
+  font-size: 15px;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  border-top: 1px solid #ddd;
+}
+
+.payment {
+  float: left;
+  padding-left: 10px;
+}
+
+.balance {
+  float: right;
+  padding-right: 10px;
+}
+</style>

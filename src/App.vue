@@ -4,38 +4,51 @@
 
     <!-- drawer content -->
 
+    <loading v-model="isLoading"></loading>
 
-        <loading v-model="isLoading"></loading>
-        <router-view class="router-view" ></router-view>
+    <keep-alive>
+      <router-view v-if="$route.meta.keepAlive"></router-view>
+    </keep-alive>
+    <router-view v-if="!$route.meta.keepAlive"></router-view>
 
-        <tabbar icon-class="vux-center" class="vux-demo-tabbar" slot="bottom" style="position:fixed">
-          <tabbar-item selected link="/">
-            <span slot="icon" class="iconfont" >&#xe614;</span>
-            <span slot="label">热销商品</span>
-          </tabbar-item>
-          <tabbar-item link="/order">
-          <span slot="icon" class="iconfont" >&#xe616;</span>
-            <span slot="label">我的订单</span>
-          </tabbar-item>
+    <tabbar
+      icon-class="vux-center"
+      class="vux-demo-tabbar"
+      slot="bottom"
+      style="position:fixed;border-top:1px solid #000"
+    >
+      <tabbar-item :selected="$route.path === '/'" link="/">
+        <span slot="icon" class="iconfont">&#xe614;</span>
+        <span slot="label" class="label">线上订货</span>
+      </tabbar-item>
+      <tabbar-item :selected="$route.path === '/order'" link="/order">
+        <span slot="icon" class="iconfont">&#xe616;</span>
+        <span slot="label" class="label">订单核对</span>
+      </tabbar-item>
 
-          <tabbar-item link="/myInformation">
-          <span slot="icon" class="iconfont"  >&#xe61e;</span>
-            <span slot="label">我的</span>
-          </tabbar-item>
-        </tabbar>
-
-
+      <tabbar-item :selected="$route.path === '/statement'" link="/statement">
+        <span slot="icon" class="iconfont">&#xe62b;</span>
+        <span slot="label" class="label">资金对账</span>
+      </tabbar-item>
+      <tabbar-item
+        :selected="$route.path === '/myinformation'"
+        link="/myinformation"
+      >
+        <span slot="icon" class="iconfont">&#xe618;</span>
+        <span slot="label" class="label">我的</span>
+      </tabbar-item>
+    </tabbar>
   </div>
 </template>
 
 <script>
-import { Tabbar, TabbarItem, Group, Cell,Drawer,ViewBox,XHeader } from 'vux'
-
-import { Loading } from 'vux'
-import { mapState } from 'vuex'
+import { Tabbar, TabbarItem, Group, Cell, Drawer, ViewBox, XHeader } from "vux";
+import svgIcon from "./components/svg";
+import { Loading } from "vux";
+import { mapState } from "vuex";
 export default {
-  name: 'app',
-
+  name: "app",
+  mounted() {},
   components: {
     Tabbar,
     TabbarItem,
@@ -44,31 +57,33 @@ export default {
     ViewBox,
     Drawer,
     XHeader,
-    Loading
+    Loading,
+    svgIcon
   },
-  data(){
+  data() {
     return {
       drawerVisibility: false,
-      showModeValue: 'push',
-      showPlacementValue: 'left'
-    }
+      showModeValue: "push",
+      showPlacementValue: "left",
+      activeColor: "#fff"
+    };
   },
-  computed:{
+  computed: {
     ...mapState({
       isLoading: state => state.vux.isLoading
     }),
-    leftOptions () {
+    leftOptions() {
       return {
-        showBack: this.route.path !== '/'
-      }
+        showBack: this.route.path !== "/"
+      };
     }
   }
-}
+};
 </script>
 
 <style lang="less">
-@import '~vux/src/styles/reset.less';
-@import './styles/font.less';
+@import "~vux/src/styles/reset.less";
+@import "./styles/font.less";
 
 body {
   background-color: #fbf9fe;
@@ -77,7 +92,10 @@ body {
   width: 100%;
   top: 46px;
 }
-.weui-tabbar{
-  position:fixed;
+.weui-tabbar {
+  position: fixed;
+}
+.label {
+  font-size: 16px;
 }
 </style>

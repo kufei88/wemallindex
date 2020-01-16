@@ -4,10 +4,10 @@ var path = require('path')
 module.exports = {
   build: {
     env: require('./prod.env'),
-    index: path.resolve(__dirname, 'G:/html/wemallServer/src/main/resources/static/wemallindex/index.html'),
-    assetsRoot: path.resolve(__dirname, 'G:/html/wemallServer/src/main/resources/static/wemallindex'),
+    index: path.resolve(__dirname, 'F:/PSSWeb1/WebRoot/vegetables/index.html'),
+    assetsRoot: path.resolve(__dirname, 'F:/PSSWeb1/WebRoot/vegetables'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/wemallindex/',
+    assetsPublicPath: '',
     productionSourceMap: true,
     // Gzip off by default as many popular static hosts such as
     // Surge or Netlify already gzip all static assets for you.
@@ -23,18 +23,18 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 8081,
+    port: 8086,
     autoOpenBrowser: false,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://localhost:7777/',
+        target: 'http://localhost:18080/PSSWeb/vegetables/api/',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
         }
-    }
+      }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

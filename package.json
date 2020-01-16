@@ -1,7 +1,7 @@
 {
-  "name": "wemall",
+  "name": "vegetables",
   "version": "1.0.0",
-  "description": "A Vue.js project",
+  "description": "果蔬公众号",
   "author": "kufei88 <117672825@qq.com>",
   "private": true,
   "scripts": {
@@ -9,9 +9,21 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "axios": "^0.19.0",
+    "color-convert": "^1.9.1",
+    "css-loader": "^0.26.4",
+    "delegate": "^3.2.0",
+    "escape-string-regexp": "^1.0.5",
     "fastclick": "^1.0.6",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^6.0.6",
+    "strip-ansi": "^4.0.0",
     "vue": "^2.2.2",
+    "vue-clipboard2": "^0.0.8",
+    "vue-echarts": "^3.0.7",
+    "vue-mobile-calendar": "^3.3.0",
     "vue-router": "^2.2.0",
+    "vue-style-loader": "^2.0.5",
     "vuex": "^2.1.1",
     "vuex-i18n": "^1.3.1",
     "vux": "^2.2.1",

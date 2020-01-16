@@ -1,108 +1,169 @@
 <<template>
   <div style="padding-bottom: 50px">
-    <x-header :left-options="{showBack: false}" >个人中心</x-header>
+    <x-header :left-options="{ showBack: false }" class="header"
+      >个人中心</x-header
+    >
     <div class="main">
-      <div class="header">
-        <img :src="headImgUrl" class="headImg">
-        <div class="nick"><span>微信帐号</span>{{nick}}</div>
+      <div class="mainheader">
+        <img :src="headImgUrl" class="headImg" />
+        <div class="nick"><span>公司名称</span>{{ username }}</div>
       </div>
-      <group>
-        <divider>识别下面的二维码成为商户</divider>
-        <qrcode :value="shopcode" size="160"></qrcode>
-      </group>
+      <group label-width="5em">
+        <cell title="信誉额度">{{ maxDebt.toFixed(2) }}元/{{ payDate }}天</cell>
+        <cell title="欠款">{{ balance.toFixed(2) }}元</cell>
 
+        <cell :title="limitDebtTitle"
+          >{{ Math.abs(lostDebt).toFixed(2) }}元</cell
+        >
+        <cell title="欠款天数">{{ maxDay }}天</cell>
+        <cell :title="limitDayTitle"
+          >{{ maxDay == 0 ? 0 : Math.abs(payDate - maxDay) }}天</cell
+        >
+      </group>
     </div>
+    <div v-transfer-dom>
+      <x-dialog v-model="showPass">
+        <group title="修改密码" style="width:300px">
+          <x-input type="password" title="新密码" v-model="pass"></x-input>
+          <x-input type="password" title="密码确认" v-model="repass"></x-input>
+        </group>
+        <flexbox style="padding:10px">
+          <flexbox-item>
+            <x-button type="primary" @click.native="modify_pass">确定</x-button>
+          </flexbox-item>
+          <flexbox-item>
+            <x-button type="warn" @click.native="showPass = false"
+              >取消</x-button
+            >
+          </flexbox-item>
+        </flexbox>
+      </x-dialog>
+    </div>
+    <x-button @click.native="showContact">联系我们</x-button>
+    <x-button @click.native="showPass = true">修改密码</x-button>
+    <x-button @click.native="logout">退出登录</x-button>
   </div>
 </template>
-<<script>
-import {XHeader,Divider,XInput, Group,XButton,Toast,Cell,Qrcode} from 'vux';
-import HttpUtil from '../util/HttpUtil';
-import MyUtil from '../util/MyUtil';
-import { mapState } from 'vuex'
+<
+<script>
+import {
+  XHeader,
+  Divider,
+  XInput,
+  Group,
+  XButton,
+  Toast,
+  Cell,
+  Qrcode,
+  XDialog,
+  TransferDomDirective as TransferDom,
+  Flexbox,
+  FlexboxItem
+} from "vux";
+import HttpUtil from "../util/HttpUtil";
+import MyUtil from "../util/MyUtil";
+import { mapState } from "vuex";
 export default {
-  data(){
-    return {
-
-      number:'',
-      code:'',
-      shopcode:'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxc8423586aa004b0a&redirect_uri=http%3a%2f%2fwww.jishengsoft.com%2fredirect%2fredirectwemall.asp&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
-    }
+  directives: {
+    TransferDom
   },
-  methods:{
-    sendVirfyCode(){
+  data() {
+    return {
+      pass: "",
+      repass: "",
+      balance: 0,
+      maxDebt: 0,
+      lostDebt: 0,
+      maxDay: 0,
+      number: "",
+      code: "",
+      limitDebtTitle: "剩余额度",
+      limitDayTitle: "剩余天数",
+      payDate: 0,
+      showPass: false,
+      shopcode:
+        "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxc8423586aa004b0a&redirect_uri=http%3a%2f%2fwww.jishengsoft.com%2fredirect%2fredirectwemall.asp&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
+    };
+  },
+  methods: {
+    showContact() {
+      this.$router.push("/contact");
+    },
+    getClientInformation() {
+      let _this = this;
+      HttpUtil.get(
+        "bill/getClientCredit.do",
+        { client: this.username },
+        function(data) {
+          console.log(data);
+          _this.balance = data.endBalance;
+          _this.maxDebt = data.maxDebt;
+          _this.lostDebt =
+            data.maxDebt == 0 ? 0 : data.maxDebt - data.endBalance;
+          _this.limitDebtTitle = _this.lostDebt < 0 ? "超出额度" : "剩余额度";
+          _this.maxDay = data.maxDay;
 
-      if (!MyUtil.validateMobile(this.number)){
+          _this.payDate = data.payDate;
+          _this.limitDayTitle =
+            _this.payDate - _this.maxDay < 0 ? "超出天数" : "剩余天数";
+        }
+      );
+    },
+    logout() {
+      let _this = this;
+
+      HttpUtil.get(
+        "wechat/logout.do",
+        { openid: this.$store.state.vux.snsUserInfo.openId },
+        function(data) {
+          _this.$store.commit("updateUsername", "");
+          _this.$router.push({ path: "/" });
+        }
+      );
+    },
+    modify_pass() {
+      let _this = this;
+      if (!this.pass) {
         this.$vux.toast.show({
-          text: '请输入正确的手机号',
-          type:'warn'
-          })
+          text: "请输入密码",
+          type: "warn"
+        });
         return;
       }
-      let _this = this;
-      this.$httputil.get('user/generationCode',{number:this.number},function(data){
-        if(data.result == 'success'){
-          _this.$vux.toast.show({
-            text: '发送成功'
-          })
+      if (this.pass != this.repass) {
+        this.$vux.toast.show({
+          text: "两次密码不一致",
+          type: "warn"
+        });
+        return;
+      }
+      HttpUtil.post(
+        "bill/update_client_pass.do",
+        { client: this.username, pass: this.pass },
+        function(data) {
+          if (data > 0) {
+            _this.$vux.toast.show({
+              text: "修改成功",
+              type: "success"
+            });
+            _this.showPass = false;
+          }
         }
-        else if(data.result == 'exists'){
-          _this.$vux.toast.show({
-            text: '同一个手机号两分钟内不能重复发送',
-            type:'warn'
-          })
-        }
-        else if (data.result == 'due'){
-          _this.$vux.toast.show({
-            text: '登录已过期，请重新登录',
-            type:'warn'
-          })
-        }
-        else if (data.result == 'numberExists'){
-          _this.$vux.toast.show({
-            text: '该手机号已绑定其它用户',
-            type:'warn'
-          })
-        }
-      })
-    },
-    bindingUser(){
-      let _this = this;
-      this.$httputil.post('user/bindingUser',{number:this.number,code:this.code},function(data){
-        if(data.result == 'codeerr'){
-          _this.$vux.toast.show({
-            text: '验证码错误',
-            type:'warn'
-          })
-        }
-        else if (data.result == 'due'){
-          _this.$vux.toast.show({
-            text: '登录已过期，请重新登录',
-            type:'warn'
-          })
-        }
-        else if (data.result == 'success'){
-          _this.$vux.toast.show({
-            text: '绑定成功'
-          })
-
-          _this.$store.commit('updateUsername',{username:_this.number});
-        }
-
-      })
+      );
     }
   },
-  computed:{
+  computed: {
     ...mapState({
       nick: state => state.vux.snsUserInfo.nickname,
-      headImgUrl : state => state.vux.snsUserInfo.headImgUrl,
-      username : state => state.vux.snsUserInfo.username,
-    }),
-  }
-  ,
-  mounted(){
-    console.log(this.$store.state.vux.snsUserInfo);
+      headImgUrl: state => state.vux.snsUserInfo.headImgUrl,
+      username: state => state.vux.snsUserInfo.username
+    })
   },
-  components:{
+  mounted() {
+    console.log(this.$store.state.vux.snsUserInfo);
+    this.getClientInformation();
+  },
+  components: {
     XHeader,
     Divider,
     XInput,
@@ -110,38 +171,44 @@ export default {
     XButton,
     Toast,
     Cell,
-    Qrcode
+    Qrcode,
+    XDialog,
+    Flexbox,
+    FlexboxItem
   }
-}
+};
 </script>
 <style>
-  .main{
-    padding: 10px;
-
-  }
-  .header{
-    height: 50px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #d3d3d3;
-  }
-  .headImg{
-    width: 50px;
-    height: 50px;
-    float: left;
-  }
-  .nick{
-    float: left;
-    margin-left: 10px;
-    height: 50px;
-    line-height: 50px;
-
-  }
-  .nick span{
-    color: #A1A1A1;
-    margin-right: 5px;
-  }
-  .numberform h1{
-    text-align: center;
-    color: #A1A1A1;
-  }
+.main {
+  padding: 10px;
+}
+.mainheader {
+  height: 50px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d3d3d3;
+}
+.header {
+  background: linear-gradient(90deg, #1a961a, #6bc2f7);
+  box-shadow: 0 2px 5px rgba(255, 98, 98, 0.4);
+}
+.headImg {
+  width: 50px;
+  height: 50px;
+  float: left;
+}
+.nick {
+  float: left;
+  margin-left: 10px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 18px;
+}
+.nick span {
+  color: #a1a1a1;
+  margin-right: 5px;
+}
+.numberform h1 {
+  text-align: center;
+  color: #a1a1a1;
+}
 </style>
