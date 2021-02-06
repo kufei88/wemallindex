@@ -1,11 +1,9 @@
 <template>
   <div class="order" style="padding-bottom: 50px">
-    <x-header :left-options="{ showBack: true }" class="header"
-      >单据明细</x-header
-    >
+    <x-header :left-options="{ showBack: true }" class="header">单据明细</x-header>
     <div style="font-size:12px;color:red;background:#d3d3d3">
       {{
-        "采购日期:" + beginDate + "  总金额:" + totalSum.toFixed(2)
+      "采购日期:" + beginDate + " 总金额:" + totalSum.toFixed(2)
       }}(说明:左滑可以显示溯源)
     </div>
     <div style="font-size:16px;background-color:#fff;">
@@ -24,26 +22,26 @@
           @click.prevent="edtBill(item)"
         >
           <div slot="right-menu">
-            <swipeout-button type="warn" @click.native="onSwapClick(item)"
-              >溯源</swipeout-button
-            >
+            <swipeout-button type="warn" @click.native="onSwapClick(item)">溯源</swipeout-button>
           </div>
           <div slot="content">
             <flexbox style="height:30px;margin-left:10px">
               <flexbox-item :span="3">{{ item.goodsName }}</flexbox-item>
               <flexbox-item :span="2">{{ -item.number }}</flexbox-item>
               <flexbox-item :span="2">{{ -item.weight }}</flexbox-item>
-              <flexbox-item :span="2">{{
+              <flexbox-item :span="2">
+                {{
                 -item.weightPrice.toFixed(2)
-              }}</flexbox-item>
-              <flexbox-item :span="3" style="margin-left:-5px">{{
+                }}
+              </flexbox-item>
+              <flexbox-item :span="3" style="margin-left:-5px">
+                {{
                 (item.price * -item.number).toFixed(2)
-              }}</flexbox-item>
+                }}
+              </flexbox-item>
             </flexbox>
             <flexbox style="height:30px;margin-left:10px;color:#d3d3d3">
-              <flexbox-item
-                >备注:{{ item.remark ? item.remark : "" }}</flexbox-item
-              >
+              <flexbox-item>备注:{{ item.remark ? item.remark : "" }}</flexbox-item>
             </flexbox>
           </div>
         </swipeout-item>
@@ -51,36 +49,16 @@
     </div>
     <div v-transfer-dom>
       <x-dialog v-model="showSource">
-        <group
-          label-width="4.5em"
-          label-margin-right="1em"
-          label-align="justify"
-        >
+        <group label-width="4.5em" label-margin-right="1em" label-align="justify">
           <group-title slot="title">
             溯源
-            <span
-              @click="showSource = false"
-              style="float:right;"
-              class="vux-close"
-            ></span>
+            <span @click="showSource = false" style="float:right;" class="vux-close"></span>
           </group-title>
-          <x-input
-            title="操作员"
-            readonly
-            :value="sourceGoods.operator"
-          ></x-input>
+          <x-input title="操作员" readonly :value="sourceGoods.operator"></x-input>
 
-          <x-input
-            title="销售单位"
-            readonly
-            :value="sourceGoods.sellCompany"
-          ></x-input>
+          <x-input title="销售单位" readonly :value="sourceGoods.sellCompany"></x-input>
           <x-input title="产地" readonly :value="sourceGoods.area"></x-input>
-          <x-input
-            title="供应商"
-            readonly
-            :value="sourceGoods.company"
-          ></x-input>
+          <x-input title="供应商" readonly :value="sourceGoods.company"></x-input>
         </group>
       </x-dialog>
     </div>

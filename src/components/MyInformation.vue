@@ -39,6 +39,7 @@
         </flexbox>
       </x-dialog>
     </div>
+    <x-button @click.native="showSupplierSellQuery" v-show="type=='供应商'||type=='客户及供应商'">查销售</x-button>
     <x-button @click.native="showContact">联系我们</x-button>
     <x-button @click.native="showPass = true">修改密码</x-button>
     <x-button @click.native="logout">退出登录</x-button>
@@ -88,6 +89,9 @@ export default {
   methods: {
     showContact() {
       this.$router.push("/contact");
+    },
+    showSupplierSellQuery(){
+      this.$router.push("/supplier_sellQuery");
     },
     getClientInformation() {
       let _this = this;
@@ -156,11 +160,12 @@ export default {
     ...mapState({
       nick: state => state.vux.snsUserInfo.nickname,
       headImgUrl: state => state.vux.snsUserInfo.headImgUrl,
-      username: state => state.vux.snsUserInfo.username
+      username: state => state.vux.snsUserInfo.username,
+      type:state => state.vux.snsUserInfo.type
     })
   },
   mounted() {
-    console.log(this.$store.state.vux.snsUserInfo);
+    console.log(this.type);
     this.getClientInformation();
   },
   components: {

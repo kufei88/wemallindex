@@ -9,10 +9,14 @@ import Order from "./components/Order";
 import Sell from "./components/Sell";
 import MyTab from "./components/MyTab";
 import billDetail from "./components/BillDetail";
+import sellDetail from "./components/sellDetail";
 import myinformation from "./components/MyInformation.vue";
 import contact from "./components/Contact.vue";
+import supplier_sellQuery from "./components/supplier_sellQuery.vue";
 import Vuex from "vuex";
-import { BusPlugin } from "vux";
+import {
+  BusPlugin
+} from "vux";
 import {
   AjaxPlugin,
   LoadingPlugin,
@@ -49,8 +53,7 @@ Vue.component("chart", ECharts);
 Vue.prototype.$geturlpara = geturlpara;
 Vue.prototype.$httputil = HttpUtil;
 
-const routes = [
-  {
+const routes = [{
     path: "/",
     component: Commodity,
     meta: {
@@ -84,6 +87,10 @@ const routes = [
     component: MyTab
   },
   {
+    path: "/sellDetail",
+    component: sellDetail
+  },
+  {
     path: "/billDetail",
     component: billDetail
   },
@@ -92,12 +99,11 @@ const routes = [
     component: myinformation
   },
   {
-    path: "/myinformation",
-    component: myinformation
-  },
-  {
     path: "/contact",
     component: contact
+  }, {
+    path: "/supplier_sellQuery",
+    component: supplier_sellQuery
   }
 ];
 
@@ -130,7 +136,7 @@ store.registerModule("vux", {
   }
 });
 
-router.beforeEach(function(to, from, next) {
+router.beforeEach(function (to, from, next) {
   console.log(store.state.vux.snsUserInfo.username);
   if (
     store.state.vux.snsUserInfo &&
@@ -148,7 +154,7 @@ router.beforeEach(function(to, from, next) {
   }
 });
 
-router.afterEach(function(to) {
+router.afterEach(function (to) {
   store.commit("updateLoadingStatus", {
     isLoading: false
   });

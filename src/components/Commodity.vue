@@ -458,6 +458,7 @@ export default {
         "wechat/clientLogin.do",
         { code: code, state: state },
         function(data) {
+          console.log(data);
           _this.wxid = data.openId;
           if (data.username != "null") {
             _this.unRegister = false;
